@@ -1,0 +1,255 @@
+/* 页面切换 */
+.page {
+  display: none;
+}
+.page.active {
+  display: block;
+}
+
+/* 左侧导航 */
+.sidebar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 24px;
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 8px;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.nav-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 圆形进度图 */
+.circle-progress {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.circle-progress svg {
+  transform: rotate(-90deg);
+}
+
+.circle-progress circle {
+  fill: none;
+  stroke-width: 10;
+}
+
+.circle-bg {
+  stroke: #e5e7eb;
+}
+
+.circle-bar {
+  stroke: #667eea;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.circle-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: #667eea;
+}
+
+/* 日历热力图 */
+.calendar-day {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.calendar-day:hover {
+  transform: scale(1.1);
+}
+
+.calendar-day.level-0 {
+  background-color: #f3f4f6;
+}
+
+.calendar-day.level-1 {
+  background-color: #bfdbfe;
+}
+
+.calendar-day.level-2 {
+  background-color: #60a5fa;
+}
+
+.calendar-day.level-3 {
+  background-color: #2563eb;
+}
+
+/* 按钮 */
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  padding: 12px 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-success {
+  background-color: #10b981;
+  color: white;
+  font-weight: 600;
+  padding: 16px 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transition: all 0.2s;
+  min-width: 80px;
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-success:hover {
+  background-color: #059669;
+}
+
+.btn-success:active {
+  transform: scale(0.95);
+}
+
+.btn-danger {
+  background-color: #ef4444;
+  color: white;
+  font-weight: 600;
+  padding: 16px 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  transition: all 0.2s;
+  min-width: 80px;
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+}
+
+.btn-danger:active {
+  transform: scale(0.95);
+}
+
+/* 卡片 */
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.word-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 2px solid #f3f4f6;
+  transition: all 0.2s;
+}
+
+.word-card:hover {
+  border-color: #bfdbfe;
+}
+
+/* 统计卡片 */
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* 选择学习内容卡片 - 渐变背景 */
+.grade-card {
+  background: linear-gradient(135deg, #e0e7ff 0%, #ddd6fe 100%);
+  border-radius: 16px;
+  padding: 24px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.grade-card:hover {
+  border-color: #8b5cf6;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+  transform: translateY(-4px);
+}
+
+.grade-card-locked {
+  background: #f9fafb;
+  border-radius: 16px;
+  padding: 24px;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 响应式：手机端隐藏侧边栏，显示底部导航 */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+
+  .bottom-nav {
+    display: flex !important;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+  }
+}
+
+.bottom-nav {
+  display: none;
+}
