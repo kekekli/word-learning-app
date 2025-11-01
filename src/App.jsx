@@ -49,14 +49,6 @@ const LibraryIcon = () => (
   </svg>
 );
 
-const BackupIcon = () => (
-  <svg className="nav-icon" viewBox="0 0 24 24">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-    <polyline points="7 10 12 15 17 10"></polyline>
-    <line x1="12" y1="15" x2="12" y2="3"></line>
-  </svg>
-);
-
 const BookIcon = () => (
   <svg className="w-10 h-10 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
@@ -184,13 +176,6 @@ function App() {
           >
             <LibraryIcon />
             <span>单词库</span>
-          </div>
-          <div
-            className={`nav-item ${currentPage === 'backup' ? 'active' : ''}`}
-            onClick={() => navigateTo('backup')}
-          >
-            <BackupIcon />
-            <span>备份恢复</span>
           </div>
         </nav>
       </aside>
@@ -410,7 +395,7 @@ function App() {
         {currentPage === 'history' && <HistoryPage />}
 
         {/* 单词库管理和备份恢复页面 */}
-        {(currentPage === 'library' || currentPage === 'backup') && (
+        {currentPage === 'library' && (
           <LibraryPage
             onRefresh={() => {
               loadStats();

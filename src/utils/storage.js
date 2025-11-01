@@ -52,47 +52,6 @@ export const getUnitWords = (grade, unit) => {
   return library[grade]?.[unit] || [];
 };
 
-/**
- * 添加新年级段
- * @param {string} grade - 年级段名称
- * @param {Object} units - Unit数据
- */
-export const addGrade = (grade, units) => {
-  const library = getWordLibrary();
-  library[grade] = units;
-  saveWordLibrary(library);
-};
-
-/**
- * 添加单词到指定Unit
- * @param {string} grade - 年级段名称
- * @param {string} unit - Unit名称
- * @param {Object} word - 单词对象 {word, meaning}
- */
-export const addWord = (grade, unit, word) => {
-  const library = getWordLibrary();
-  if (!library[grade]) library[grade] = {};
-  if (!library[grade][unit]) library[grade][unit] = [];
-  library[grade][unit].push(word);
-  saveWordLibrary(library);
-};
-
-/**
- * 删除单词（保留历史记录）
- * @param {string} grade - 年级段名称
- * @param {string} unit - Unit名称
- * @param {string} wordText - 单词文本
- */
-export const deleteWord = (grade, unit, wordText) => {
-  const library = getWordLibrary();
-  if (library[grade]?.[unit]) {
-    library[grade][unit] = library[grade][unit].filter(
-      w => w.word !== wordText
-    );
-    saveWordLibrary(library);
-  }
-};
-
 // ========== 背诵记录操作 ==========
 
 /**
@@ -446,4 +405,249 @@ export const initializeData = (defaultLibrary) => {
   if (Object.keys(existingLibrary).length === 0 && defaultLibrary) {
     saveWordLibrary(defaultLibrary);
   }
+};
+
+// ========== 单词库编辑功能 ==========
+
+/**
+ * 添加新年级
+ * @param {string} gradeName - 年级名称
+ * @returns {boolean} 是否成功
+ */
+export const addGrade = (gradeName) => {
+  const library = getWordLibrary();
+  if (library[gradeName]) {
+    return false; // 已存在
+  }
+  library[gradeName] = {};
+  saveWordLibrary(library);
+  return true;
+};
+
+/**
+ * 删除年级
+ * @param {string} gradeName - 年级名称
+ * @returns {boolean} 是否成功
+ */
+export const deleteGrade = (gradeName) => {
+  const library = getWordLibrary();
+  if (!library[gradeName]) {
+    return false; // 不存在
+  }
+  delete library[gradeName];
+  saveWordLibrary(library);
+  return true;
+};
+
+/**
+ * 添加单元
+ * @param {string} grade - 年级名称
+ * @param {string} unitName - 单元名称
+ * @returns {boolean} 是否成功
+ */
+export const addUnit = (grade, unitName) => {
+  const library = getWordLibrary();
+  if (!library[grade]) {
+    return false; // 年级不存在
+  }
+  if (library[grade][unitName]) {
+    return false; // 单元已存在
+  }
+  library[grade][unitName] = [];
+  saveWordLibrary(library);
+  return true;
+};
+
+/**
+ * 删除单元
+ * @param {string} grade - 年级名称
+ * @param {string} unitName - 单元名称
+ * @returns {boolean} 是否成功
+ */
+export const deleteUnit = (grade, unitName) => {
+  const library = getWordLibrary();
+  if (!library[grade] || !library[grade][unitName]) {
+    return false; // 不存在
+  }
+  delete library[grade][unitName];
+  saveWordLibrary(library);
+  return true;
+};
+
+/**
+ * 重命名单元
+ * @param {string} grade - 年级名称
+ * @param {string} oldName - 旧单元名称
+ * @param {string} newName - 新单元名称
+ * @returns {boolean} 是否成功
+ */
+export const renameUnit = (grade, oldName, newName) => {
+  const library = getWordLibrary();
+  if (!library[grade] || !library[grade][oldName]) {
+    return false; // 旧单元不存在
+  }
+  if (library[grade][newName]) {
+    return false; // 新名称已存在
+  }
+  library[grade][newName] = library[grade][oldName];
+  delete library[grade][oldName];
+  saveWordLibrary(library);
+  return true;
+};
+
+/**
+ * 添加单词
+ * @param {string} grade - 年级名称
+ * @param {string} unit - 单元名称
+ * @param {Object} wordData - {word, meaning, pronunciation}
+ * @returns {boolean} 是否成功
+ */
+export const addWord = (grade, unit, wordData) => {
+  const library = getWordLibrary();
+  if (!library[grade] || !library[grade][unit]) {
+    return false; // 年级或单元不存在
+  }
+  // 检查单词是否已存在
+  const exists = library[grade][unit].some(w => w.word === wordData.word);
+  if (exists) {
+    return false;
+  }
+  library[grade][unit].push({
+    word: wordData.word,
+    meaning: wordData.meaning,
+    pronunciation: wordData.pronunciation || ''
+  });
+  saveWordLibrary(library);
+  return true;
+};
+
+/**
+ * 更新单词
+ * @param {string} grade - 年级名称
+ * @param {string} unit - 单元名称
+ * @param {string} oldWord - 旧单词
+ * @param {Object} newWordData - {word, meaning, pronunciation}
+ * @returns {boolean} 是否成功
+ */
+export const updateWord = (grade, unit, oldWord, newWordData) => {
+  const library = getWordLibrary();
+  if (!library[grade] || !library[grade][unit]) {
+    return false;
+  }
+  const index = library[grade][unit].findIndex(w => w.word === oldWord);
+  if (index === -1) {
+    return false; // 单词不存在
+  }
+  library[grade][unit][index] = {
+    word: newWordData.word,
+    meaning: newWordData.meaning,
+    pronunciation: newWordData.pronunciation || ''
+  };
+  saveWordLibrary(library);
+  return true;
+};
+
+/**
+ * 删除单词
+ * @param {string} grade - 年级名称
+ * @param {string} unit - 单元名称
+ * @param {string} wordText - 单词文本
+ * @returns {boolean} 是否成功
+ */
+export const deleteWord = (grade, unit, wordText) => {
+  const library = getWordLibrary();
+  if (!library[grade] || !library[grade][unit]) {
+    return false;
+  }
+  library[grade][unit] = library[grade][unit].filter(w => w.word !== wordText);
+  saveWordLibrary(library);
+  return true;
+};
+
+/**
+ * 批量导入单词
+ * @param {string} grade - 年级名称
+ * @param {string} unit - 单元名称
+ * @param {string} text - 导入文本（每行一个），支持多种格式：
+ *   - 横杠格式：word-meaning-pronunciation
+ *   - 空格格式：word /pronunciation/ meaning
+ *   - 空格格式：word meaning（无音标）
+ * @returns {Object} {success: 成功数, failed: 失败数, errors: 错误信息数组}
+ */
+export const importWords = (grade, unit, text) => {
+  const library = getWordLibrary();
+  if (!library[grade] || !library[grade][unit]) {
+    return { success: 0, failed: 0, errors: ['年级或单元不存在'] };
+  }
+
+  const lines = text.trim().split('\n');
+  let success = 0;
+  let failed = 0;
+  const errors = [];
+
+  lines.forEach((line, index) => {
+    const trimmed = line.trim();
+    if (!trimmed) return; // 跳过空行
+
+    let word = '';
+    let meaning = '';
+    let pronunciation = '';
+
+    // 方案1：横杠格式（word-meaning-pronunciation）
+    if (trimmed.includes('-')) {
+      const parts = trimmed.split('-');
+      if (parts.length < 2) {
+        failed++;
+        errors.push(`第${index + 1}行格式错误: ${trimmed}`);
+        return;
+      }
+      word = parts[0].trim();
+      meaning = parts[1].trim();
+      pronunciation = parts[2] ? parts[2].trim() : '';
+    }
+    // 方案2+3：空格格式（智能识别）
+    else {
+      // 提取音标（匹配 /.../ 格式）
+      const pronunciationMatch = trimmed.match(/\/[^\/]+\//);
+      if (pronunciationMatch) {
+        pronunciation = pronunciationMatch[0];
+      }
+
+      // 去掉音标，得到剩余部分
+      let lineWithoutPronunciation = trimmed.replace(pronunciation, '').trim();
+
+      // 分割单词和意思
+      const parts = lineWithoutPronunciation.split(/\s+/);
+
+      if (parts.length < 2) {
+        failed++;
+        errors.push(`第${index + 1}行格式错误（需要至少包含单词和意思）: ${trimmed}`);
+        return;
+      }
+
+      word = parts[0];  // 第一个是单词
+      meaning = parts.slice(1).join(' ');  // 其余是意思
+    }
+
+    // 验证必填字段
+    if (!word || !meaning) {
+      failed++;
+      errors.push(`第${index + 1}行缺少单词或意思: ${trimmed}`);
+      return;
+    }
+
+    // 检查是否已存在
+    const exists = library[grade][unit].some(w => w.word === word);
+    if (exists) {
+      failed++;
+      errors.push(`第${index + 1}行单词已存在: ${word}`);
+      return;
+    }
+
+    library[grade][unit].push({ word, meaning, pronunciation });
+    success++;
+  });
+
+  saveWordLibrary(library);
+  return { success, failed, errors };
 };
