@@ -143,7 +143,7 @@ function App() {
         <div className="mb-10">
           <div className="flex items-center mb-2">
             <LibraryIcon />
-            <h1 className="text-2xl font-bold text-white ml-1">单词背诵</h1>
+            <h1 className="text-2xl font-bold text-white ml-1">七七爱记单词</h1>
           </div>
           <p className="text-white/70 text-sm ml-11">Word Learning Tool</p>
         </div>
@@ -208,8 +208,8 @@ function App() {
         {currentPage === 'home' && (
           <div>
             <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-800">开始学习</h2>
-              <p className="text-gray-500 mt-1">今天也要加油哦！💪</p>
+              <h2 className="text-3xl font-bold text-gray-800">小七的English学习之路25年10月开始</h2>
+              <p className="text-gray-500 mt-1">七七加油哦！哇哇哇💪</p>
             </div>
 
             {/* 统计数据面板 */}
@@ -267,8 +267,33 @@ function App() {
               </div>
             </div>
 
-            {/* 学习日历热力图 */}
+            {/* 选择学习内容 */}
             <div className="card mb-6">
+              <h3 className="text-xl font-bold text-gray-800 mb-4">📖 选择学习内容</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {grades.map((grade) => (
+                  <div key={grade} className="grade-card" onClick={() => {
+                    setSelectedGrade(grade);
+                    setCurrentPage('unitSelect');
+                  }}>
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-xl font-bold text-gray-800">{grade}</h4>
+                      <BookIcon />
+                    </div>
+                    <p className="text-gray-700 text-sm mb-3 font-medium">
+                      {Object.keys(getWordLibrary()[grade] || {}).length}个单元
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-600">点击开始学习</span>
+                      <span className="text-purple-700 font-bold">进入 →</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 学习日历热力图 */}
+            <div className="card">
               <h3 className="text-lg font-bold text-gray-800 mb-4">📅 学习日历（最近4周）</h3>
               <div className="flex items-start space-x-2 overflow-x-auto">
                 <div className="text-xs text-gray-500 space-y-2 mt-6">
@@ -296,31 +321,6 @@ function App() {
                 <div className="calendar-day level-2"></div>
                 <div className="calendar-day level-3"></div>
                 <span>多</span>
-              </div>
-            </div>
-
-            {/* 选择学习内容 */}
-            <div className="card">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">📖 选择学习内容</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {grades.map((grade) => (
-                  <div key={grade} className="grade-card" onClick={() => {
-                    setSelectedGrade(grade);
-                    setCurrentPage('unitSelect');
-                  }}>
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-xl font-bold text-gray-800">{grade}</h4>
-                      <BookIcon />
-                    </div>
-                    <p className="text-gray-700 text-sm mb-3 font-medium">
-                      {Object.keys(getWordLibrary()[grade] || {}).length}个单元
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-600">点击开始学习</span>
-                      <span className="text-purple-700 font-bold">进入 →</span>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           </div>
