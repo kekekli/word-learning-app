@@ -5,32 +5,153 @@ import React, { useState, useEffect } from 'react';
  * 将音标映射到单词中可能出现的字母组合
  */
 const IPA_TO_SPELLING = {
-  'iː': ['ee', 'ea', 'e', 'ie', 'ei'],
-  'ɪ': ['i', 'y', 'ui'],
-  'e': ['e', 'ea', 'a'],
-  'æ': ['a'],
-  'ɜː': ['ir', 'ur', 'er', 'or'],
-  'ə': ['a', 'e', 'i', 'o', 'u', 'y'],
-  'ʌ': ['u', 'o', 'ou'],
-  'uː': ['oo', 'u', 'ew', 'ue'],
-  'ʊ': ['oo', 'u', 'ou'],
-  'ɔː': ['al', 'au', 'aw', 'or', 'oor'],
-  'ɒ': ['o', 'a'],
-  'ɑː': ['a', 'ar'],
-  'aɪ': ['i', 'y', 'ie', 'uy'],
-  'aʊ': ['ou', 'ow'],
-  'eɪ': ['a', 'ai', 'ay', 'ea', 'ey'],
-  'oʊ': ['o', 'oa', 'ow', 'oe'],
-  'əʊ': ['o', 'oa', 'ow', 'oe'],
+  // ══════════════════════════════════════════════════════════════════
+  // 元音 Vowels
+  // 规则：按「最长优先」排列，匹配时从数组最前面开始找最长的
+  // ══════════════════════════════════════════════════════════════════
+
+  // /iː/ 长 i 音 - see, feet, me, happy, chief, receive, key
+  'iː': ['ee', 'ea', 'ie', 'ei', 'ey', 'igh', 'e', 'y'],
+
+  // /ɪ/ 短 i 音 - sit, gym, build, myth
+  'ɪ':  ['i', 'y', 'ui'],
+
+  // /e/ 短 e 音 - bed, head, any, said, friend
+  'e':  ['ea', 'ai', 'ie', 'e', 'a'],
+
+  // /æ/ 短 a 音 - cat, hat, map
+  'æ':  ['a'],
+
+  // /ɑː/ 长 a 音 - car, father, palm, bath(英)
+  'ɑː': ['ar', 'alm', 'a'],
+
+  // /ɒ/ 短 o 音 - hot, dog, want, wash
+  'ɒ':  ['o', 'a', 'ou'],
+
+  // /ɔː/ 长 or 音 - fork, bore, floor, saw, caught, walk, bought, all
+  'ɔː': ['oor', 'ore', 'ough', 'aught', 'ought', 'aw', 'or', 'au', 'al', 'a'],
+
+  // /ʌ/ 短 u 音 - cup, son, blood, young, come
+  'ʌ':  ['oo', 'ou', 'u', 'o'],
+
+  // /ʊ/ 短 oo 音 - book, put, could, wolf
+  'ʊ':  ['oo', 'ou', 'u', 'o'],
+
+  // /uː/ 长 oo 音 - moon, blue, drew, soup, rule, rude
+  'uː': ['oo', 'ew', 'ue', 'ui', 'ou', 'oe', 'u'],
+
+  // /ɜː/ er 音（r-controlled）- bird, turn, her, learn, word, journal, myrtle
+  'ɜː': ['ear', 'our', 'yr', 'ir', 'ur', 'er', 'or'],
+
+  // /ə/ 弱化元音（schwa）- sofa, about, open, pencil, lemon
+  'ə':  ['ture', 'our', 'ar', 'er', 'or', 'ure', 'a', 'e', 'i', 'o', 'u'],
+
+  // ── 双元音 Diphthongs ──────────────────────────────────────────────
+
+  // /eɪ/ 长 a 音 - day, rain, cake, they, eight, great, vein
+  'eɪ': ['eigh', 'aigh', 'ay', 'ai', 'ey', 'ea', 'a'],
+
+  // /aɪ/ 长 i 音 - night, tie, time, fly, buy, eye, pie
+  'aɪ': ['igh', 'ie', 'uy', 'eye', 'i', 'y'],
+
+  // /ɔɪ/ oi 音 - oil, boy, coin
   'ɔɪ': ['oi', 'oy'],
-  'ɪə': ['eer', 'ear', 'ere'],
-  'eə': ['air', 'are', 'ear'],
+
+  // /aʊ/ ou 音 - out, cow, house, doubt
+  'aʊ': ['ou', 'ow'],
+
+  // /əʊ/ 长 o 音（英）- boat, snow, go, toe, home, sew
+  'əʊ': ['oa', 'ow', 'oe', 'ew', 'ough', 'o'],
+
+  // /oʊ/ 长 o 音（美）- 同上
+  'oʊ': ['oa', 'ow', 'oe', 'ough', 'o'],
+
+  // /ɪə/ ear 音 - ear, deer, here, pier, weird
+  'ɪə': ['eer', 'ear', 'ere', 'ier', 'eir'],
+
+  // /eə/ air 音 - hair, bare, bear, there, prayer
+  'eə': ['air', 'are', 'ear', 'ere', 'ayer'],
+
+  // /ʊə/ ure 音 - pure, poor, tour, moor
   'ʊə': ['ure', 'oor', 'our'],
-  'p': ['p'], 'b': ['b'], 't': ['t'], 'd': ['d'], 'k': ['k', 'ck', 'ch', 'c'], 'g': ['g', 'gg'], 'ɡ': ['g', 'gg'],
-  'f': ['f', 'ff', 'ph'], 'v': ['v'], 's': ['s', 'ss', 'c'], 'z': ['z', 's', 'ss'], 'h': ['h'],
-  'm': ['m', 'mm'], 'n': ['n', 'nn', 'kn'], 'ŋ': ['ng'], 'l': ['l', 'll'], 'r': ['r', 'rr', 'wr'],
-  'j': ['y', 'i'], 'w': ['w', 'wh'], 'ʃ': ['sh', 'ch', 'ti', 'ci'], 'ʒ': ['s', 'si', 'ge'],
-  'tʃ': ['ch', 'tch'], 'dʒ': ['j', 'g', 'dg', 'ge'], 'tr': ['tr'], 'dr': ['dr'], 'ts': ['ts'], 'dz': ['dz']
+
+  // ══════════════════════════════════════════════════════════════════
+  // 辅音 Consonants
+  // ══════════════════════════════════════════════════════════════════
+
+  // /p/ - pen, apple
+  'p':  ['p', 'pp'],
+
+  // /b/ - bed, rabbit
+  'b':  ['b', 'bb'],
+
+  // /t/ - ten, butter, jumped, doubt(silent b)
+  't':  ['tt', 't', 'ed'],
+
+  // /d/ - dog, muddy, played
+  'd':  ['dd', 'd', 'ed'],
+
+  // /k/ - kit, duck, cat, school, account, quay, Christmas
+  'k':  ['ck', 'ch', 'cc', 'qu', 'c', 'k', 'q'],
+
+  // /g/ - get, egg, ghost, guest, catalogue
+  'g':  ['gg', 'gh', 'gu', 'g'],
+  'ɡ':  ['gg', 'gh', 'gu', 'g'],
+
+  // /f/ - fun, off, photo, laugh, calf
+  'f':  ['ph', 'ff', 'gh', 'f'],
+
+  // /v/ - van, have, of
+  'v':  ['ve', 'v'],
+
+  // /s/ - sun, miss, city, scene, ice, house, psalm
+  's':  ['ss', 'sc', 'ce', 'se', 'ps', 'c', 's'],
+
+  // /z/ - zoo, jazz, is, nose, freeze, xylophone
+  'z':  ['zz', 'se', 'ze', 'z', 's'],
+
+  // /θ/ thin - th
+  'θ':  ['th'],
+
+  // /ð/ this - th (所有 th 开头的虚词)
+  'ð':  ['th'],
+
+  // /ʃ/ she - sh, machine, nation, special, mission, mansion, sure
+  'ʃ':  ['ssi', 'tio', 'sch', 'shi', 'sh', 'ci', 'ti', 'si', 'ch', 's'],
+
+  // /ʒ/ measure - s, si, ge, z, zh
+  'ʒ':  ['si', 'ge', 'z', 's'],
+
+  // /h/ hat - h, wh (who)
+  'h':  ['wh', 'h'],
+
+  // /tʃ/ chin - ch, -ture词尾, watch, question, future, nature, picture
+  // 注意：优先匹配最长组合
+  'tʃ': ['tch', 'ture', 'tio', 'tu', 'ti', 'ch'],
+
+  // /dʒ/ jump - j, gym, badge, bridge, age, soldier
+  'dʒ': ['dge', 'dg', 'gg', 'ge', 'di', 'j', 'g'],
+
+  // /m/ man - m, mm, lamb, column
+  'm':  ['mm', 'mb', 'mn', 'm'],
+
+  // /n/ no - n, nn, knee, gnaw, pneumonia
+  'n':  ['kn', 'gn', 'pn', 'nn', 'n'],
+
+  // /ŋ/ sing - ng, nk (think), n (uncle)
+  'ŋ':  ['ng', 'nk', 'n'],
+
+  // /l/ leg - l, ll, -le结尾
+  'l':  ['ll', 'le', 'l'],
+
+  // /r/ red - r, rr, write, rhyme
+  'r':  ['rr', 'wr', 'rh', 'r'],
+
+  // /j/ yes - y, i (onion), u (union)
+  'j':  ['y', 'i'],
+
+  // /w/ wet - w, wh, u (quiet), o (one)
+  'w':  ['wh', 'w', 'u'],
 };
 
 // ✅ 音源目录：使用 /audio/ipa/ 下已验证质量良好的 isolation 版本
@@ -102,11 +223,12 @@ export default function PhoneticPlayer({ ipa, word, onActivePhonemeChange }) {
 
   if (!ipa) return null;
 
-  const cleanIpa = ipa.replace(/[\/\\\[\]]/g, '');
+  const cleanIpa = ipa.replace(/[\/\\\[\]ˈˌ()\s]/g, '');
   const segments = [];
   let match;
   let lastIndex = 0;
 
+  PHONEME_REGEX.lastIndex = 0; // 防止 React re-render 时 lastIndex 残留污染
   while ((match = PHONEME_REGEX.exec(cleanIpa)) !== null) {
     if (match.index > lastIndex) {
       segments.push({ text: cleanIpa.substring(lastIndex, match.index), isPhoneme: false });
@@ -154,6 +276,7 @@ export default function PhoneticPlayer({ ipa, word, onActivePhonemeChange }) {
 
   return (
     <div className="phonetic-container flex items-center justify-center space-x-1 mt-6 mb-2 select-none group/player">
+
       <span className="text-slate-300 font-mono text-2xl leading-none self-center">/</span>
       <div className="flex items-center space-x-0.5 h-12">
         {segments.map((seg, idx) => (
