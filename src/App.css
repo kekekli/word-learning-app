@@ -1,255 +1,163 @@
-/* 页面切换 */
-.page {
-  display: none;
-}
-.page.active {
-  display: block;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #6366f1;
+  --secondary: #a855f7;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --bg-main: #f8fafc;
 }
 
-/* 左侧导航 */
+body {
+  @apply bg-slate-50 text-slate-900 font-sans antialiased;
+  background: radial-gradient(at top left, #eff6ff 0%, #f8fafc 100%);
+  min-height: 100vh;
+}
+
+/* 布局控制 */
 .sidebar {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(180deg, #4338ca 0%, #312e81 100%);
 }
 
-.nav-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 24px;
-  color: rgba(255, 255, 255, 0.85);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 8px;
+.main-content {
+  min-height: 100vh;
 }
 
-.nav-item:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+/* 动画定义 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
+.animate-fade-in {
+  animation: fadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes bounceSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.animate-bounce-slow {
+  animation: bounceSlow 3s ease-in-out infinite;
+}
+
+/* 导航项自定义 */
 .nav-item.active {
-  background: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
-  font-weight: 600;
+  @apply bg-white/20 text-white border-r-4 border-white;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .nav-icon {
-  width: 24px;
-  height: 24px;
-  margin-right: 12px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  @apply w-6 h-6 stroke-2;
 }
 
-/* 圆形进度图 */
+/* 热力图等级颜色 */
+.level-0 { @apply bg-slate-200/50; }
+.level-1 { @apply bg-indigo-200; }
+.level-2 { @apply bg-indigo-400; }
+.level-3 { @apply bg-indigo-600; }
+
+/* 自定义卡片样式 */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+}
+
+/* 隐藏滚动条 */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 背诵页组件样式 */
 .circle-progress {
-  position: relative;
-  width: 120px;
-  height: 120px;
+  @apply relative flex items-center justify-center;
 }
 
 .circle-progress svg {
-  transform: rotate(-90deg);
-}
-
-.circle-progress circle {
-  fill: none;
-  stroke-width: 10;
+  @apply -rotate-90;
 }
 
 .circle-bg {
-  stroke: #e5e7eb;
+  @apply stroke-slate-100 fill-none;
+  stroke-width: 8;
 }
 
 .circle-bar {
-  stroke: #667eea;
+  @apply stroke-indigo-500 fill-none;
+  stroke-width: 8;
   stroke-linecap: round;
-  transition: stroke-dashoffset 0.5s ease;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .circle-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 24px;
-  font-weight: bold;
-  color: #667eea;
+  @apply absolute font-black text-xl text-indigo-600 tracking-tighter;
 }
 
-/* 日历热力图 */
-.calendar-day {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.calendar-day:hover {
-  transform: scale(1.1);
-}
-
-.calendar-day.level-0 {
-  background-color: #f3f4f6;
-}
-
-.calendar-day.level-1 {
-  background-color: #bfdbfe;
-}
-
-.calendar-day.level-2 {
-  background-color: #60a5fa;
-}
-
-.calendar-day.level-3 {
-  background-color: #2563eb;
-}
-
-/* 按钮 */
+/* 按钮通用样式升级 */
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  font-weight: 600;
-  padding: 12px 32px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-  transition: all 0.2s;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
-}
-
-.btn-primary:active {
-  transform: scale(0.98);
+  @apply bg-indigo-600 text-white font-bold py-3 px-8 rounded-2xl shadow-lg shadow-indigo-200 
+         hover:bg-indigo-700 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all;
 }
 
 .btn-success {
-  background-color: #10b981;
-  color: white;
-  font-weight: 600;
-  padding: 16px 32px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-  transition: all 0.2s;
-  min-width: 80px;
-  font-size: 20px;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-success:hover {
-  background-color: #059669;
-}
-
-.btn-success:active {
-  transform: scale(0.95);
+  @apply bg-emerald-500 text-white font-black py-4 px-8 rounded-2xl shadow-lg shadow-emerald-100
+         hover:bg-emerald-600 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all;
 }
 
 .btn-danger {
-  background-color: #ef4444;
-  color: white;
-  font-weight: 600;
-  padding: 16px 32px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-  transition: all 0.2s;
-  min-width: 80px;
-  font-size: 20px;
-  border: none;
-  cursor: pointer;
+  @apply bg-rose-500 text-white font-black py-4 px-8 rounded-2xl shadow-lg shadow-rose-100
+         hover:bg-rose-600 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all;
 }
 
-.btn-danger:hover {
-  background-color: #dc2626;
-}
-
-.btn-danger:active {
-  transform: scale(0.95);
-}
-
-/* 卡片 */
-.card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: 24px;
-  transition: box-shadow 0.2s;
-}
-
-.card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-}
-
+/* 单词卡片升级 */
 .word-card {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  border: 2px solid #f3f4f6;
-  transition: all 0.2s;
+  @apply bg-white p-6 rounded-[2rem] border-2 border-slate-50 shadow-sm transition-all duration-300;
 }
 
-.word-card:hover {
-  border-color: #bfdbfe;
+.word-card.active {
+  @apply border-indigo-200 shadow-xl shadow-indigo-50;
 }
 
-/* 统计卡片 */
-.stat-card {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+/* 方案 A: 交互式音标按钮样式 */
+.phoneme-btn {
+  @apply relative cursor-pointer flex items-center justify-center;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  line-height: 1;
+  transform-origin: center;
 }
 
-/* 选择学习内容卡片 - 渐变背景 */
-.grade-card {
-  background: linear-gradient(135deg, #e0e7ff 0%, #ddd6fe 100%);
-  border-radius: 16px;
-  padding: 24px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.3s;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+.phoneme-btn:hover {
+  transform: translateY(-2px) scale(1.35);
+  @apply text-rose-500 z-10 bg-rose-50 shadow-md transition-all;
+  border-radius: 0.75rem;
 }
 
-.grade-card:hover {
-  border-color: #8b5cf6;
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
-  transform: translateY(-4px);
+.phoneme-btn:active {
+  @apply scale-110;
 }
 
-.grade-card-locked {
-  background: #f9fafb;
-  border-radius: 16px;
-  padding: 24px;
-  cursor: not-allowed;
-  opacity: 0.6;
+.phoneme-btn:active {
+  transform: scale(0.9);
 }
 
-/* 响应式：手机端隐藏侧边栏，显示底部导航 */
-@media (max-width: 768px) {
-  .sidebar {
-    display: none;
-  }
-
-  .bottom-nav {
-    display: flex !important;
-  }
-
-  .main-content {
-    margin-left: 0 !important;
-  }
+/* 方案 B: 手动确认动画 */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.bottom-nav {
-  display: none;
+.animate-slide-up {
+  animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* 卡片翻页动效 */
+.perspective-1000 {
+  perspective: 1000px;
 }

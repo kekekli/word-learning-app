@@ -1,21 +1,14 @@
 import { useState, useEffect } from 'react';
-import { getWrongWords, removeFromWrongBook } from '../utils/storage';
+import { useApp } from '../context/AppContext';
 
 export default function WrongBookPage({ onReviewWords }) {
-  const [wrongWords, setWrongWords] = useState([]);
+  const { wrongWords, storage, refreshStats, speak } = useApp();
   const [groupedWords, setGroupedWords] = useState({});
 
   useEffect(() => {
-    loadWrongWords();
-  }, []);
-
-  const loadWrongWords = () => {
-    const words = getWrongWords();
-    setWrongWords(words);
-
     // 按年级和单元分组
     const grouped = {};
-    words.forEach(word => {
+    wrongWords.forEach(word => {
       word.sources.forEach(source => {
         const key = `${source.grade} - ${source.unit}`;
         if (!grouped[key]) {
@@ -25,104 +18,89 @@ export default function WrongBookPage({ onReviewWords }) {
             words: []
           };
         }
-        // 避免重复添加
         if (!grouped[key].words.find(w => w.word === word.word)) {
           grouped[key].words.push(word);
         }
       });
     });
-
     setGroupedWords(grouped);
-  };
+  }, [wrongWords]);
 
   const handleRemove = (wordText) => {
-    if (confirm(`确定要从错词本移除"${wordText}"吗？`)) {
-      removeFromWrongBook(wordText);
-      loadWrongWords(); // 重新加载
+    if (confirm(`确定该单词已掌握，要从错词本移除吗？`)) {
+      storage.removeFromWrongBook(wordText);
+      refreshStats();
     }
   };
 
   const handleReviewGroup = (grade, unit, words) => {
-    // 将错词转换为背诵页面需要的格式
     const reviewWords = words.map(w => ({
       word: w.word,
       meaning: w.meaning,
-      pronunciation: '' // 错词本中没有存储音标
+      pronunciation: w.pronunciation || ''
     }));
-
     onReviewWords(grade, unit, reviewWords);
   };
 
-  // 空状态
   if (wrongWords.length === 0) {
     return (
-      <div>
-        <div className="mb-6">
-          <h2 className="text-3xl font-bold text-gray-800">错词本</h2>
-          <p className="text-gray-500 mt-1">这里记录了你需要复习的单词</p>
-        </div>
-
-        <div className="card text-center py-16">
-          <div className="text-8xl mb-6">🎉</div>
-          <h3 className="text-2xl font-bold text-gray-800 mb-2">太棒了！</h3>
-          <p className="text-gray-600">目前还没有错词，继续加油！</p>
-        </div>
+      <div className="animate-fade-in text-center py-20 bg-white rounded-[3rem] shadow-sm border border-slate-50">
+        <div className="text-8xl mb-8">🌈</div>
+        <h3 className="text-3xl font-black text-slate-800 mb-2">全对啦！</h3>
+        <p className="text-slate-400 font-bold uppercase tracking-widest text-sm">目前一个错词都没有哦</p>
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">错词本</h2>
-        <p className="text-gray-500 mt-1">共{wrongWords.length}个单词需要复习</p>
-      </div>
+    <div className="animate-fade-in space-y-8 pb-12">
+      <header>
+        <h2 className="text-3xl font-black text-slate-800 tracking-tight">错词库</h2>
+        <p className="text-slate-400 font-bold uppercase tracking-widest text-xs mt-1">
+          共 {wrongWords.length} 个顽固单词待攻克
+        </p>
+      </header>
 
-      {/* 按年级单元分组显示 */}
       <div className="space-y-6">
         {Object.keys(groupedWords).map(key => {
           const group = groupedWords[key];
-
           return (
-            <div key={key} className="card">
-              <div className="flex items-center justify-between mb-4">
+            <div key={key} className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-50 overflow-hidden relative group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-bl-full -mr-16 -mt-16 opacity-50 transition-transform group-hover:scale-110"></div>
+              
+              <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-800">{group.grade} - {group.unit}</h3>
-                  <p className="text-sm text-gray-500 mt-1">{group.words.length}个错词</p>
+                  <h3 className="text-2xl font-black text-slate-800">{group.unit}</h3>
+                  <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">{group.grade}</p>
                 </div>
                 <button
                   onClick={() => handleReviewGroup(group.grade, group.unit, group.words)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-xl transition-all"
+                  className="bg-rose-500 text-white font-black py-3 px-8 rounded-2xl shadow-lg shadow-rose-100 hover:bg-rose-600 transition-all active:scale-95"
                 >
-                  复习这些单词
+                  复习该组错词 ({group.words.length})
                 </button>
               </div>
 
-              {/* 错词列表 */}
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
                 {group.words.map(word => (
-                  <div
-                    key={word.word}
-                    className="flex items-center justify-between bg-red-50 border border-red-200 rounded-xl p-4"
-                  >
+                  <div key={word.word} className="bg-slate-50/50 p-4 rounded-3xl border border-slate-100 flex items-center justify-between group/item hover:bg-white hover:shadow-xl transition-all">
                     <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-1">
-                        <span className="text-2xl font-bold text-gray-800">{word.word}</span>
-                        <span className="text-lg text-gray-600">{word.meaning}</span>
+                      <div className="flex items-center space-x-3">
+                        <span className="text-xl font-black text-slate-800 tracking-tight cursor-pointer hover:text-indigo-600" onClick={() => speak(word.word)}>{word.word}</span>
+                        <span className="text-slate-400 font-bold text-sm tracking-tight">{word.meaning}</span>
                       </div>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
-                        <span>错误 {word.errorCount} 次</span>
-                        <span>最后错误：{word.lastErrorDate}</span>
+                      <div className="mt-2 flex items-center space-x-3">
+                        <span className="bg-rose-100 text-rose-600 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest">错误 {word.errorCount} 次</span>
+                        <span className="text-slate-300 text-[10px] font-bold">最后错误: {word.lastErrorDate}</span>
                       </div>
                     </div>
                     <button
                       onClick={() => handleRemove(word.word)}
-                      className="text-gray-400 hover:text-red-600 transition-colors px-3"
-                      title="移除（已掌握）"
+                      className="text-slate-300 hover:text-rose-500 transition-colors p-2"
+                      title="掌握了"
                     >
-                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                        <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
                     </button>
                   </div>
