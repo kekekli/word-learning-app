@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { shuffleArray } from '../utils/helpers';
 import { addRecord } from '../utils/storage';
 import { useApp } from '../context/AppContext';
-import PhoneticPlayer, { IPA_TO_SPELLING } from '../components/PhoneticPlayer';
+import PhoneticPlayer from '../components/PhoneticPlayer';
+import { IPA_TO_SPELLING, generatePhoneticBlocks } from '../utils/phoneticUtils';
 
 // 智能字母高亮组件
 const HighlightableWord = ({ word, activePhoneme }) => {
@@ -152,6 +153,7 @@ export default function RecitePage({ grade, unit, words, onComplete, onBack }) {
   };
 
   const currentWord = shuffledWords[currentIndex];
+  const phoneticBlocks = currentWord ? generatePhoneticBlocks(currentWord.word, currentWord.pronunciation) : [];
 
   if (!currentWord) return null;
 
@@ -206,9 +208,8 @@ export default function RecitePage({ grade, unit, words, onComplete, onBack }) {
                 
                 {/* 方案 A：交互式音标 */}
                 <PhoneticPlayer 
-                  ipa={currentWord.pronunciation} 
-                  word={currentWord.word}
-                  onActivePhonemeChange={setActivePhoneme}
+                  blocks={phoneticBlocks}
+                  onActiveBlockChange={(block) => setActivePhoneme(block?.phonetic || null)}
                 />
               </div>
             </div>
