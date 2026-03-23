@@ -5,49 +5,8 @@ import { useApp } from '../context/AppContext';
 import PhoneticPlayer from '../components/PhoneticPlayer';
 import { IPA_TO_SPELLING, generatePhoneticBlocks } from '../utils/phoneticUtils';
 
-// 智能字母高亮组件
-const HighlightableWord = ({ word, activePhoneme }) => {
-  const [match, setMatch] = useState(null);
+// HighlightableWord 逻辑已由新版 PhoneticPlayer 接管
 
-  useEffect(() => {
-    if (!activePhoneme) {
-      setMatch(null);
-      return;
-    }
-
-    const lowerWord = word.toLowerCase();
-    const spellings = IPA_TO_SPELLING[activePhoneme] || [];
-    
-    // 优先尝试贪婪匹配最长的拼写组合 (例如 'ee' 优先于 'e')
-    const sortedSpellings = [...spellings].sort((a, b) => b.length - a.length);
-    
-    for (const s of sortedSpellings) {
-      const idx = lowerWord.indexOf(s);
-      if (idx !== -1) {
-        setMatch({ start: idx, end: idx + s.length });
-        return;
-      }
-    }
-    setMatch(null);
-  }, [word, activePhoneme]);
-
-  return (
-    <div className="text-4xl font-black tracking-tight text-indigo-600 flex justify-center">
-      {word.split('').map((char, i) => (
-        <span 
-          key={i} 
-          className={`transition-all duration-300 ${
-            match && i >= match.start && i < match.end
-              ? 'text-rose-500 scale-125 mx-0.5 drop-shadow-[0_0_8px_rgba(244,63,94,0.4)]'
-              : ''
-          }`}
-        >
-          {char}
-        </span>
-      ))}
-    </div>
-  );
-};
 
 // 圆形进度图组件
 const CircleProgress = ({ current, total }) => {
@@ -196,22 +155,15 @@ export default function RecitePage({ grade, unit, words, onComplete, onBack }) {
               </h3>
             </div>
 
-            {/* 英文展示区 */}
             <div className={`transition-all duration-500 transform ${isRevealed || showEnglish ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'}`}>
-              <div className="flex flex-col items-center">
-                <div 
-                  className="cursor-pointer hover:scale-105 transition-transform"
-                  onClick={() => speak(currentWord.word)}
-                >
-                  <HighlightableWord word={currentWord.word} activePhoneme={activePhoneme} />
-                </div>
-                
-                {/* 方案 A：交互式音标 */}
-                <PhoneticPlayer 
-                  blocks={phoneticBlocks}
-                  onActiveBlockChange={(block) => setActivePhoneme(block?.phonetic || null)}
-                />
-              </div>
+              <PhoneticPlayer 
+                wordData={{
+                  ...currentWord,
+                  blocks: currentWord.blocks || generatePhoneticBlocks(currentWord.word, currentWord.pronunciation)
+                }}
+                onActiveBlockChange={(block) => setActivePhoneme(block?.phonetic || null)}
+                onPlayWord={() => speak(currentWord.word)}
+              />
             </div>
 
             {/* 控制区 - 揭晓后缩小，为下方按钮腾空间 */}

@@ -124,4 +124,80 @@ export const pepLibrary = {
       { word: "help", meaning: "帮助", pronunciation: "/help/" }
     ]
   }
+,
+  "人教版 PEP 四年级下册": {
+    "Unit 1: My school": [
+      { word: "first floor", meaning: "一楼", pronunciation: "/fɜːst flɔː(r)/" },
+      { word: "second floor", meaning: "二楼", pronunciation: "/ˈsekənd flɔː(r)/" },
+      { word: "teacher's office", meaning: "教师办公室", pronunciation: "/ˈtiːtʃəz ˈɒfɪs/" },
+      { word: "library", meaning: "图书馆", pronunciation: "/ˈlaɪbrəri/" },
+      { word: "playground", meaning: "操场", pronunciation: "/ˈpleɪɡraʊnd/" }
+    ],
+    "Unit 2: What time is it?": [
+      { word: "breakfast", meaning: "早餐", pronunciation: "/ˈbrekfəst/" },
+      { word: "English class", meaning: "英语课", pronunciation: "/ˈɪŋɡlɪʃ klɑːs/" },
+      { word: "lunch", meaning: "午餐", pronunciation: "/lʌntʃ/" },
+      { word: "music class", meaning: "音乐课", pronunciation: "/ˈmjuːzɪk klɑːs/" },
+      { word: "PE class", meaning: "体育课", pronunciation: "/ˌpiː ˈiː klɑːs/" },
+      { word: "dinner", meaning: "晚餐", pronunciation: "/ˈdɪnə(r)/" }
+    ]
+  },
+  "人教版 PEP 五年级上册": {
+    "Unit 1: What's he like?": [
+      { word: "old", meaning: "老的", pronunciation: "/əʊld/" },
+      { word: "young", meaning: "年轻的", pronunciation: "/jʌŋ/" },
+      { word: "funny", meaning: "滑稽的", pronunciation: "/ˈfʌni/" },
+      { word: "kind", meaning: "体贴的；慈祥的", pronunciation: "/kaɪnd/" },
+      { word: "strict", meaning: "严厉的", pronunciation: "/strɪkt/" },
+      { word: "polite", meaning: "有礼貌的", pronunciation: "/pəˈlaɪt/" },
+      { word: "hard-working", meaning: "工作努力的", pronunciation: "/ˌhɑːd ˈwɜːkɪŋ/" },
+      { word: "helpful", meaning: "有用的", pronunciation: "/ˈhelpfl/" },
+      { word: "clever", meaning: "聪明的", pronunciation: "/ˈklevə(r)/" },
+      { word: "shy", meaning: "羞怯的", pronunciation: "/ʃaɪ/" }
+    ]
+  },
+  "人教版 PEP 五年级下册": {
+    "Unit 1: My day": [
+      { word: "eat breakfast", meaning: "吃早饭", pronunciation: "/iːt ˈbrekfəst/" },
+      { word: "do morning exercises", meaning: "做早操", pronunciation: "/duː ˈmɔːnɪŋ ˈeksəsaɪzɪz/" },
+      { word: "have...class", meaning: "上...课", pronunciation: "/hæv...klɑːs/" },
+      { word: "play sports", meaning: "进行体育运动", pronunciation: "/pleɪ spɔːts/" },
+      { word: "eat dinner", meaning: "吃晚饭", pronunciation: "/iːt ˈdɪnə(r)/" },
+      { word: "clean my room", meaning: "打扫我的房间", pronunciation: "/kliːn maɪ ruːm/" },
+      { word: "go for a walk", meaning: "散步", pronunciation: "/ɡəʊ fɔː(r) ə wɔːk/" },
+      { word: "go shopping", meaning: "去买东西", pronunciation: "/ɡəʊ ˈʃɒpɪŋ/" },
+      { word: "take", meaning: "学习；上(课)", pronunciation: "/teɪk/" },
+      { word: "dancing", meaning: "跳舞", pronunciation: "/ˈdɑːnsɪŋ/" }
+    ]
+  },
+  "人教版 PEP 六年级上册": {
+    "Unit 1: How can I get there?": [
+      { word: "science", meaning: "科学", pronunciation: "/ˈsaɪəns/" },
+      { word: "museum", meaning: "博物馆", pronunciation: "/mjuˈziːəm/" },
+      { word: "post office", meaning: "邮局", pronunciation: "/pəʊst ˈɒfɪs/" },
+      { word: "bookstore", meaning: "书店", pronunciation: "/ˈbʊkstɔː(r)/" },
+      { word: "cinema", meaning: "电影院", pronunciation: "/ˈsɪnəmə/" },
+      { word: "hospital", meaning: "医院", pronunciation: "/ˈhɒspɪtl/" },
+      { word: "crossing", meaning: "十字路口", pronunciation: "/ˈkrɒsɪŋ/" },
+      { word: "turn", meaning: "转弯", pronunciation: "/tɜːn/" },
+      { word: "left", meaning: "左", pronunciation: "/left/" },
+      { word: "straight", meaning: "笔直地", pronunciation: "/streɪt/" },
+      { word: "right", meaning: "右", pronunciation: "/raɪt/" }
+    ]
+  },
+  "人教版 PEP 六年级下册": {
+    "Unit 1: How tall are you?": [
+      { word: "younger", meaning: "更年轻的", pronunciation: "/ˈjʌŋɡə(r)/" },
+      { word: "older", meaning: "更年长的", pronunciation: "/ˈəʊldə(r)/" },
+      { word: "taller", meaning: "更高的", pronunciation: "/ˈtɔːlə(r)/" },
+      { word: "shorter", meaning: "更矮的；更短的", pronunciation: "/ˈʃɔːtə(r)/" },
+      { word: "longer", meaning: "更长的", pronunciation: "/ˈlɒŋɡə(r)/" },
+      { word: "thinner", meaning: "更瘦的", pronunciation: "/ˈθɪnə(r)/" },
+      { word: "heavier", meaning: "更重的", pronunciation: "/ˈheviə(r)/" },
+      { word: "bigger", meaning: "更大的", pronunciation: "/ˈbɪɡə(r)/" },
+      { word: "smaller", meaning: "更小的", pronunciation: "/ˈsmɔːlə(r)/" },
+      { word: "stronger", meaning: "更强壮的", pronunciation: "/ˈstrɒŋɡə(r)/" }
+    ]
+  }
 };
+

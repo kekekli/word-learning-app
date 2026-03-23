@@ -1,84 +1,25 @@
 import React, { useState } from 'react';
+import { IPA_FILENAME_MAP } from '../config/ipaMap'; // 引入外部定义的并规范好的映射表
 
-// ✅ 纯净美式发音映射表 (US Phonemes)
-// 移除了所有不规范的降级映射 (如 tr->t)，缺少的复合音应在云端补充真实 mp3
 const AUDIO_BASE = '/word-learning-app/audio/ipa/';
 
-const IPA_FILENAME_MAP = {
-  // ── 美式单元音 Vowels ───────────────────────────────────────────
-  'iː': 'iː_isolation.mp3',     // see, feet
-  'ɪ':  'ɪ_isolation.mp3',      // sit, bit
-  'e':  'e_isolation.mp3',      // bed, red (有时也写作 /ɛ/)
-  'æ':  'æ_isolation.mp3',      // cat, hat
-  'ɜː': 'ɜː_isolation.mp3',     // bird, girl (美音带 r 色彩，通常写作 /ɝ/)
-  'ə':  'ə_isolation.mp3',      // about, sofa
-  'ʌ':  'ʌ_isolation.mp3',      // cup, but
-  'uː': 'uː_isolation.mp3',     // food, moon
-  'ʊ':  'ʊ_isolation.mp3',      // book, good
-  'ɔː': 'ɔː_isolation.mp3',     // ball, call (美音中常与 /ɑː/ 合并)
-  'ɑː': 'ɑː_isolation.mp3',     // car, farm, hot (美音 hot 发 /ɑː/)
-
-  // ── 美式双元音 Diphthongs ───────────────────────────────────────
-  'aɪ': 'aɪ_isolation.mp3',     // my, time
-  'aʊ': 'aʊ_isolation.mp3',     // now, out
-  'eɪ': 'eɪ_isolation.mp3',     // day, name
-  'oʊ': 'oʊ_isolation.mp3',     // go, home (美式规范写法，替代英式的 əʊ)
-  'ɔɪ': 'ɔɪ_isolation.mp3',     // boy, oil
-
-  // 美音中带 r 的元音通常不再视作独立双元音，而是 元音+r，但为兼容拆解保留：
-  'ɪr': 'ɪr_isolation.mp3',     // ear, here (美音发音)
-  'er': 'er_isolation.mp3',     // air, care (美音发音)
-  'ʊr': 'ʊr_isolation.mp3',     // tour, pure (美音发音)
-
-  // ── 辅音 Consonants ─────────────────────────────────────────────
-  'p':  'p_isolation.mp3',
-  'b':  'b_isolation.mp3',
-  't':  't_isolation.mp3',
-  'd':  'd_isolation.mp3',
-  'k':  'k_isolation.mp3',
-  'g':  'g_isolation.mp3',
-  'ɡ':  'g_isolation.mp3',      // 兼容 Unicode U+0261
-  'f':  'f_isolation.mp3',
-  'v':  'v_isolation.mp3',
-  's':  's_isolation.mp3',
-  'z':  'z_isolation.mp3',
-  'θ':  'θ_isolation.mp3',      // think
-  'ð':  'ð_isolation.mp3',      // this
-  'ʃ':  'ʃ_isolation.mp3',      // she
-  'ʒ':  'ʒ_isolation.mp3',      // measure
-  'h':  'h_isolation.mp3',
-  'm':  'm_isolation.mp3',
-  'n':  'n_isolation.mp3',
-  'ŋ':  'ŋ_isolation.mp3',      // sing
-  'l':  'l_isolation.mp3',
-  'r':  'r_isolation.mp3',
-  'j':  'j_isolation.mp3',      // yes
-  'w':  'w_isolation.mp3',
-  'tʃ': 'tʃ_isolation.mp3',     // China, check
-  'dʒ': 'dʒ_isolation.mp3',     // jump, age
-  'ks': 'ks_isolation.mp3'      // x as in box
-};
-
-/**
- * PhoneticPlayer 组件
- * @param {Array} blocks - 结构化数组。示例: [{ letters: "g", phonetic: "g" }, { letters: "e", phonetic: "", is_silent: true }]
- */
-export default function PhoneticPlayer({ blocks, onActiveBlockChange }) {
-  // 使用 index 而不是 phonetic 文本来记录 active 状态，防止单词中有两个相同的音标导致同时高亮
+export default function PhoneticPlayer({ wordData, onActiveBlockChange, onPlayWord }) {
+  // 通过索引绑定上下区域，彻底解决重复字母高亮错位问题
   const [activeIndex, setActiveIndex] = useState(null);
 
-  if (!blocks || !Array.isArray(blocks) || blocks.length === 0) return null;
+  if (!wordData || !wordData.blocks || wordData.blocks.length === 0) return null;
+  const { blocks } = wordData;
 
   const playBlock = (block, index) => {
-    // 拦截静音字母（如 Magic E）
+    // 拦截静音字母 (Magic E)
     if (block.is_silent || !block.phonetic) {
-      console.log(`[点击拦截] 字母 ${block.letters} 为静音字母，不播放发音。`);
+      console.log(`[静音拦截] ${block.letters} 是静音字母，不播放。`);
       return;
     }
 
-    const phoneme = block.phonetic.replace(/[\/\\\[\]]/g, ''); // 清理可能带入的斜杠
+    const phoneme = block.phonetic.replace(/[\/\\\[\]]/g, '');
     
-    // 设置高亮
+    // 设置高亮状态（上下 UI 联动）
     setActiveIndex(index);
     onActiveBlockChange?.(block);
 
@@ -88,69 +29,105 @@ export default function PhoneticPlayer({ blocks, onActiveBlockChange }) {
       const audio = new Audio(url);
       audio.crossOrigin = "anonymous";
       audio.play().catch(e => {
-        // 网络或浏览器策略拦截时报错，绝不使用机器配音兜底
-        console.error(`[播放失败] 音频文件加载失败: ${url}`, e);
+        console.error(`[播放失败] 文件找不到或被拦截: ${url}`, e);
       });
     } else {
-      // 字典表未匹配到时，直接阻断并抛出清晰错误
-      console.error(`[严重数据缺失] 音标 /${phoneme}/ 未在 IPA_FILENAME_MAP 中找到对应音频！请核对 JSON 数据或补充音频。`);
+      console.error(`[致命错误] 字典表中缺少音标映射: /${phoneme}/。请勿使用机器配音，必须补充音频文件！`);
     }
 
-    // 1.5秒后清除高亮状态
+    // 1.2秒后恢复默认状态
     setTimeout(() => {
       setActiveIndex(null);
       onActiveBlockChange?.(null);
-    }, 1500);
+    }, 1200);
   };
 
   return (
-    <div className="phonetic-container flex flex-wrap items-center justify-center gap-2 mt-8 mb-4 select-none">
-      {blocks.map((block, idx) => {
-        const isSilent = block.is_silent || !block.phonetic;
-        const isActive = activeIndex === idx;
-
-        return (
-          <button
-            key={idx}
-            onClick={(e) => {
-              e.stopPropagation();
-              playBlock(block, idx);
-            }}
-            disabled={isSilent}
-            className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all relative outline-none
-              ${isSilent 
-                ? 'opacity-40 cursor-not-allowed grayscale' 
-                : 'cursor-pointer hover:bg-rose-50 active:scale-95'
-              }
-              ${isActive 
-                ? 'bg-rose-100 shadow-sm scale-110 z-10' 
-                : 'bg-transparent'
-              }
-            `}
-          >
-            {/* 字母层 (UI 上方) */}
-            <span className={`font-sans text-4xl font-bold leading-none mb-1 
-              ${isActive ? 'text-rose-600' : (isSilent ? 'text-slate-400' : 'text-slate-700')}
-            `}>
-              {block.letters}
-            </span>
-
-            {/* 音标层 (UI 下方) */}
-            {!isSilent && (
-              <span className={`font-mono text-xl leading-none 
-                ${isActive ? 'text-rose-500 font-bold' : 'text-slate-500'}
-              `}>
-                /{block.phonetic}/
+    <div className="flex flex-col items-center justify-center w-full mt-6">
+      
+      {/* 顶部：完整单词展示区 (由 blocks 拼装，取代死板的字符串) */}
+      <div 
+        className="flex items-center justify-center mb-12 group cursor-pointer active:scale-95 transition-transform"
+        onClick={() => onPlayWord && onPlayWord()}
+        title="点击重新听发音"
+      >
+        <div className="flex justify-center text-5xl md:text-6xl font-black tracking-wide select-none">
+          {blocks.map((block, idx) => {
+            const isActive = activeIndex === idx;
+            const isSilent = block.is_silent;
+            return (
+              <span 
+                key={`top-${idx}`} 
+                className={`transition-colors duration-200 
+                  ${isActive ? 'text-rose-500' : (isSilent ? 'text-slate-300' : 'text-slate-800')}
+                `}
+              >
+                {block.letters}
               </span>
-            )}
+            );
+          })}
+        </div>
+        
+        {/* 喇叭图标，整词发音提示 */}
+        <div className="ml-4 w-12 h-12 rounded-[1.2rem] bg-indigo-50 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-all opacity-80 group-hover:opacity-100 shadow-sm border border-indigo-100/50">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+        </div>
+      </div>
 
-            {/* 高亮指示圆点 */}
-            <span className={`absolute -top-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-rose-500 rounded-full transition-opacity duration-200 
-              ${isActive ? 'opacity-100' : 'opacity-0'}
-            `}></span>
-          </button>
-        );
-      })}
+      {/* 底部：音素切片交互区 */}
+      <div className="phonetic-container flex flex-wrap items-center justify-center gap-2 select-none">
+        {blocks.map((block, idx) => {
+          const isSilent = block.is_silent || !block.phonetic;
+          const isActive = activeIndex === idx;
+
+          return (
+            <button
+              key={`bot-${idx}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                playBlock(block, idx);
+              }}
+              disabled={isSilent}
+              className={`flex flex-col items-center justify-center p-3 rounded-2xl transition-all relative outline-none min-w-[3.5rem]
+                ${isSilent 
+                  ? 'opacity-40 cursor-not-allowed grayscale' 
+                  : 'cursor-pointer hover:bg-slate-50 active:scale-95'
+                }
+                ${isActive 
+                  ? 'bg-rose-50 shadow-md scale-110 z-10 border border-rose-100' 
+                  : 'bg-transparent border border-transparent'
+                }
+              `}
+            >
+              {/* 交互区块：字母 */}
+              <span className={`font-sans text-3xl font-bold leading-none mb-2 
+                ${isActive ? 'text-rose-600' : (isSilent ? 'text-slate-400' : 'text-slate-700')}
+              `}>
+                {block.letters}
+              </span>
+
+              {/* 交互区块：音标 */}
+              {!isSilent && (
+                <span className={`font-mono text-xl leading-none 
+                  ${isActive ? 'text-rose-500 font-bold' : 'text-slate-400'}
+                `}>
+                  /{block.phonetic}/
+                </span>
+              )}
+
+              {/* 顶部的小红点指示器 */}
+              <span className={`absolute -top-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-rose-500 rounded-full transition-opacity duration-200 
+                ${isActive ? 'opacity-100' : 'opacity-0'}
+              `}></span>
+            </button>
+          );
+        })}
+      </div>
+
     </div>
   );
 }

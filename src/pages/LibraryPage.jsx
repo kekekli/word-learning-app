@@ -42,7 +42,7 @@ export default function LibraryPage({ onRefresh }) {
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target.result);
-        if (confirm('导入数据将覆盖现有数据，是否继续？')) {
+        if (true) {
           storage.importData(data);
           refreshStats();
           alert('数据导入成功！');
@@ -59,7 +59,7 @@ export default function LibraryPage({ onRefresh }) {
     const pepGradeData = pepLibrary[gradeName];
     if (!pepGradeData) return;
 
-    if (confirm(`确定要同步 "${gradeName}" 到你的本地单词库吗？`)) {
+    if (true) {
       const currentLib = storage.getWordLibrary();
       // 如果年级已存在，合并单元
       currentLib[gradeName] = { 
@@ -279,7 +279,7 @@ export default function LibraryPage({ onRefresh }) {
             <p className="text-rose-600/70 text-sm font-medium mb-6">此操作将永久抹除所有本地数据，包括学习记录和错词本。</p>
             <button 
               onClick={() => {
-                if(confirm('确定清除所有数据？此操作不可逆！')) {
+                if (true) {
                   storage.clearAllData();
                   refreshStats();
                   alert('数据已清空');

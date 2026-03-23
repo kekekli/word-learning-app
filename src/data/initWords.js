@@ -1837,7 +1837,17 @@ export const defaultWordLibrary = {
       {
         "word": "breakfast",
         "meaning": "早餐；早饭",
-        "pronunciation": "/'brekfəst/"
+        "pronunciation": "/'brekfəst/",
+        "blocks": [
+          { "letters": "b", "phonetic": "b" },
+          { "letters": "r", "phonetic": "r" },
+          { "letters": "ea", "phonetic": "e" }, 
+          { "letters": "k", "phonetic": "k" },
+          { "letters": "f", "phonetic": "f" },
+          { "letters": "a", "phonetic": "ə" }, 
+          { "letters": "s", "phonetic": "s" },
+          { "letters": "t", "phonetic": "t" }
+        ]
       },
       {
         "word": "time",
@@ -1914,7 +1924,12 @@ export const defaultWordLibrary = {
       {
         "word": "boat",
         "meaning": "小船；舟",
-        "pronunciation": "/bəʊt/"
+        "pronunciation": "/bəʊt/",
+        "blocks": [
+          { "letters": "b", "phonetic": "b" },
+          { "letters": "oa", "phonetic": "oʊ" }, 
+          { "letters": "t", "phonetic": "t" }
+        ]
       },
       {
         "word": "cool",
@@ -1969,7 +1984,12 @@ export const defaultWordLibrary = {
       {
         "word": "box",
         "meaning": "盒子",
-        "pronunciation": "/bɒks/"
+        "pronunciation": "/bɒks/",
+        "blocks": [
+          { "letters": "b", "phonetic": "b" },
+          { "letters": "o", "phonetic": "ɑː" },
+          { "letters": "x", "phonetic": "ks" } 
+        ]
       },
       {
         "word": "cap",
